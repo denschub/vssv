@@ -19,7 +19,7 @@ RUN \
 USER app:app
 COPY --from=builder /app/out/bin/vssv /app
 
-ENV LISTEN_URL [::]:3000
+ENV LISTEN_ADDR [::]:3000
 EXPOSE 3000
 HEALTHCHECK CMD curl -f http://localhost:3000/readyz || exit 1
 CMD ["/app/vssv"]

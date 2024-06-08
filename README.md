@@ -114,9 +114,9 @@ First, scroll back up and re-read the "You don't want to use this." section.
 
 But if you have to, there is a container image [in the GitHub Container registry at `ghcr.io/denschub/vssv:latest`](https://github.com/denschub/vssv/pkgs/container/vssv), and [on Docker Hub as `denschub/vssv:latest`](https://hub.docker.com/repository/docker/denschub/vssv/general). The container exposes port 3000.
 
-Make sure to set the `DATABASE_URL` environment variable to a valid PostgreSQL connection URL like `postgres://postgres@127.0.0.1/vssv`. The database needs to exist before starting the server, but the server startup procedure will take care of all database migrations.
+Configuration of the server is done with either environment variables or via CLI arguments. Make sure to set `DATABASE_URL`/`--database-url` to a valid PostgreSQL connection URL like `postgres://postgres@127.0.0.1/vssv`. The database needs to exist before starting the server, but the server startup procedure will take care of all database migrations.
 
-Released binaries are available for all stable releases. Check the [Releases section on GitHub](https://github.com/denschub/vssv/releases) for the latest release, and you'll find a `.zip` with a pre-built binary. If you run the binary yourself, also make sure to set the `[::1]:3000` environment variable to a valid listen address, like `[::1]:3000`, for example.
+Released binaries are available for all stable releases. Check the [Releases section on GitHub](https://github.com/denschub/vssv/releases) for the latest release, and you'll find a `.zip` with a pre-built binary. If you run the binary yourself, also make sure to set `LISTEN_ADDR`/`--listen-addr` to a valid listen address, like `[::1]:3000`, for example.
 
 You can also build a binary yourself if you have the latest stable Rust toolchain installed. Simply run `cargo build --release`, and you'll find a ready-to-use binary at `target/release/vssv`.
 

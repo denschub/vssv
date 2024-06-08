@@ -4,7 +4,7 @@ description = "A very simple secrets vault."
 authors = ["Dennis Schubert <mail@dennis-schubert.de>"]
 repository = "https://github.com/denschub/vssv"
 license = "MIT"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 
 [profile.release]
@@ -15,8 +15,7 @@ anyhow = "1"
 axum = { version = "0.7", features = ["macros"] }
 axum-extra = { version = "0.9", features = ["typed-header"] }
 chrono = "0.4"
-clap = "4"
-dotenvy = "0.15"
+clap = { version = "4", features = ["derive", "env"] }
 num_cpus = "1"
 serde = { version = "1", features = ["derive"] }
 sqlx = { version = "0.7", features = [

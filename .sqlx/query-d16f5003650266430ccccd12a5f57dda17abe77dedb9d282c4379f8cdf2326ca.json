@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select token from token_permissions where token = $1 and secret = $2 and can_read = true",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "token",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "d16f5003650266430ccccd12a5f57dda17abe77dedb9d282c4379f8cdf2326ca"
+}

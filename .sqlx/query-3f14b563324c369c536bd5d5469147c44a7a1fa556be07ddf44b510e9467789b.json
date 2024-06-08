@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select uuid, file_name, contents from secrets where uuid = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "uuid",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "file_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "contents",
+        "type_info": "Bytea"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "3f14b563324c369c536bd5d5469147c44a7a1fa556be07ddf44b510e9467789b"
+}

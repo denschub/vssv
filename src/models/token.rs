@@ -18,16 +18,9 @@ use crate::{errors::ResponseError, ServerState};
 #[derive(Debug)]
 pub struct Token {
     pub uuid: Uuid,
-
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
-    pub used_at: Option<DateTime<Utc>>,
     pub expires_at: Option<DateTime<Utc>>,
-
     pub token: String,
     pub superuser: bool,
-
-    pub notes: Option<String>,
 }
 
 impl Token {
@@ -37,9 +30,13 @@ impl Token {
         db: impl PgExecutor<'e>,
         token: &str,
     ) -> Result<Option<Self>, sqlx::Error> {
-        sqlx::query_as!(Self, "select * from tokens where token = $1", token)
-            .fetch_optional(db)
-            .await
+        sqlx::query_as!(
+            Self,
+            "select uuid, expires_at, token, superuser from tokens where token = $1",
+            token
+        )
+        .fetch_optional(db)
+        .await
     }
 
     /// Little helper that checks if a token is expired. If the token has no
@@ -59,10 +56,9 @@ impl Token {
         &mut self,
         db: impl PgExecutor<'e>,
     ) -> Result<PgQueryResult, sqlx::Error> {
-        self.updated_at = Utc::now();
         sqlx::query!(
             "update tokens set used_at = $1 where uuid = $2",
-            self.updated_at,
+            Utc::now(),
             self.uuid
         )
         .execute(db)
@@ -82,7 +78,7 @@ impl Token {
         }
 
         Ok(sqlx::query!(
-            r#"select * from token_permissions where token = $1 and secret = $2 and can_read = true"#,
+            r#"select token from token_permissions where token = $1 and secret = $2 and can_read = true"#,
             self.uuid,
             secret_uuid
         ).fetch_optional(db).await?.is_some())
@@ -101,7 +97,7 @@ impl Token {
         }
 
         Ok(sqlx::query!(
-            r#"select * from token_permissions where token = $1 and secret = $2 and can_write = true"#,
+            r#"select token from token_permissions where token = $1 and secret = $2 and can_write = true"#,
             self.uuid,
             secret_uuid
         ).fetch_optional(db).await?.is_some())

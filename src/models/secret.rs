@@ -3,7 +3,6 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use chrono::{DateTime, Utc};
 use sqlx::{postgres::PgQueryResult, PgExecutor};
 use uuid::Uuid;
 
@@ -11,23 +10,21 @@ use uuid::Uuid;
 #[derive(Debug)]
 pub struct Secret {
     pub uuid: Uuid,
-
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
-
     pub file_name: Option<String>,
     pub contents: Option<Vec<u8>>,
-
-    pub notes: Option<String>,
 }
 
 impl Secret {
     /// Tries to find a Secret based on its UUID. Returns an Error if nothing
     /// could be found.
     pub async fn find<'e>(db: impl PgExecutor<'e>, uuid: Uuid) -> Result<Self, sqlx::Error> {
-        sqlx::query_as!(Self, "select * from secrets where uuid = $1", uuid)
-            .fetch_one(db)
-            .await
+        sqlx::query_as!(
+            Self,
+            "select uuid, file_name, contents from secrets where uuid = $1",
+            uuid
+        )
+        .fetch_one(db)
+        .await
     }
 
     /// Updates the contents of the Secret, both in the struct, but also in the

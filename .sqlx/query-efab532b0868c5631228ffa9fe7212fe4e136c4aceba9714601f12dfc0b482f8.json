@@ -1,0 +1,27 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into audit_log (client_addr, action, token, secret) values ($1, $2, $3, $4)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Inet",
+        {
+          "Custom": {
+            "name": "audit_log_action",
+            "kind": {
+              "Enum": [
+                "secret_read",
+                "secret_write"
+              ]
+            }
+          }
+        },
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "efab532b0868c5631228ffa9fe7212fe4e136c4aceba9714601f12dfc0b482f8"
+}

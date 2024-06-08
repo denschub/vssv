@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update secrets set contents = $1 where uuid = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Bytea",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "92a34ba18a75ae42a134419cc211d078430596a3435130e98038d9a1da8ed772"
+}

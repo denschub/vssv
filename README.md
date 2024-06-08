@@ -26,7 +26,7 @@ Example curl call:
 curl -JOH "Authorization: Bearer TOKEN" https://wow-so-secure.exmaple.com/secret/UUID
 ```
 
-For reference, the combination of curl's `-J` and `-O` tells curl to download the file, and use the file name provided by the server. Providing a file name in the database is optional, but if you do, it will set the right HTTP header to amke that happen.
+For reference, the combination of curl's `-J` and `-O` tells curl to download the file, and use the file name provided by the server. Providing a file name in the database is optional, but if you do, it will set the right HTTP header to make that happen.
 
 ### Updating a secret's contents
 

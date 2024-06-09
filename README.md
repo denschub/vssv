@@ -33,7 +33,7 @@ For reference, the combination of curl's `-J` and `-O` tells curl to download th
 There is no API to update any of a secret's metadata, but you can update a secret's contents. THis is done via a simple HTTP POST:
 
 ```sh
-curl -X POST --data-binary "@example.json" -H "Authorization: Bearer TOKEN" http://localhost:3000/secret/UUID/contents
+curl -X POST --data-binary "@example.json" -H "Authorization: Bearer TOKEN" https://wow-so-secure.exmaple.com/secret/UUID/contents
 ```
 
 ## Management

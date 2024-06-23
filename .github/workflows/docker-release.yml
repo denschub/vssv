@@ -2,8 +2,7 @@ name: docker-release
 
 on:
   release:
-    types:
-      - published
+    types: [published]
 
 jobs:
   publish:

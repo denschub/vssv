@@ -12,8 +12,8 @@ lto = "fat"
 
 [dependencies]
 anyhow = "1"
-axum = { version = "0.7", features = ["macros"] }
-axum-extra = { version = "0.9", features = ["typed-header"] }
+axum = { version = "0.8", features = ["macros"] }
+axum-extra = { version = "0.10", features = ["typed-header"] }
 chrono = "0.4"
 clap = { version = "4", features = ["derive", "env"] }
 num_cpus = "1"

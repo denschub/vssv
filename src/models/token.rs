@@ -1,5 +1,4 @@
 use axum::{
-    async_trait,
     extract::{FromRef, FromRequestParts},
     http::request::Parts,
 };
@@ -107,7 +106,6 @@ impl Token {
 #[derive(Debug)]
 pub struct ExtractValidToken(pub Token);
 
-#[async_trait]
 impl<S> FromRequestParts<S> for ExtractValidToken
 where
     ServerState: FromRef<S>,

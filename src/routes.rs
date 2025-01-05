@@ -17,7 +17,7 @@ pub fn build_router(state: ServerState) -> Router {
     Router::new()
         .route("/livez", get(get_livez))
         .route("/readyz", get(get_readyz))
-        .route("/secret/:uuid", get(get_secret))
-        .route("/secret/:uuid/contents", post(post_secret_contents))
+        .route("/secret/{uuid}", get(get_secret))
+        .route("/secret/{uuid}/contents", post(post_secret_contents))
         .with_state(state)
 }

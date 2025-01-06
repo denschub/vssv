@@ -1,4 +1,4 @@
-# 1.3.0 (unreleased)
+# 1.3.0
 
 This version instroduces a new setting, `--use-x-real-ip`/`USE_X_REAL_IP`, that defaults to `false`. If set, `vssv` will read the `x-real-ip` header to determine the client IP address, which gets stored in the audit log. This is useful, for example, if you run `vssv` behind a reverse proxy like `nginx`.
 

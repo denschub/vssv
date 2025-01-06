@@ -9,4 +9,5 @@ pub mod settings;
 #[derive(Clone)]
 pub struct ServerState {
     pub database: PgPool,
+    pub use_x_real_ip: bool,
 }

@@ -67,7 +67,10 @@ async fn run(settings: Settings) -> anyhow::Result<()> {
     let db_pool = get_db_pool(settings.database_url).await?;
     sqlx::migrate!().run(&db_pool).await?;
 
-    let router = build_router(ServerState { database: db_pool });
+    let router = build_router(ServerState {
+        database: db_pool,
+        use_x_real_ip: settings.use_x_real_ip,
+    });
     let listener = TcpListener::bind(settings.listen_addr).await?;
 
     info!("Will start to listen on `{}`...", settings.listen_addr);

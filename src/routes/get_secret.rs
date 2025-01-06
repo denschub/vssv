@@ -1,7 +1,5 @@
-use std::net::SocketAddr;
-
 use axum::{
-    extract::{ConnectInfo, Path, State},
+    extract::{Path, State},
     response::{IntoResponse, Response},
 };
 use tracing::warn;
@@ -9,7 +7,10 @@ use uuid::Uuid;
 
 use crate::{
     errors::ResponseError,
-    models::{audit_log_entry::AuditLogAction, token::ExtractValidToken, AuditLogEntry, Secret},
+    models::{
+        audit_log_entry::AuditLogAction, client_addr::ExtractClientAddr, token::ExtractValidToken,
+        AuditLogEntry, Secret,
+    },
     ServerState,
 };
 
@@ -21,7 +22,7 @@ use crate::{
 pub async fn get_secret(
     State(state): State<ServerState>,
     Path(uuid): Path<Uuid>,
-    ConnectInfo(client_addr): ConnectInfo<SocketAddr>,
+    ExtractClientAddr(client_addr): ExtractClientAddr,
     ExtractValidToken(token): ExtractValidToken,
 ) -> Result<Response, ResponseError> {
     if !token.can_read_secret(&state.database, uuid).await? {
@@ -35,7 +36,7 @@ pub async fn get_secret(
     let secret = Secret::find(&state.database, uuid).await?;
     let _ = AuditLogEntry::log_action(
         &state.database,
-        client_addr.ip(),
+        client_addr.ip,
         AuditLogAction::SecretRead,
         token.uuid,
         secret.uuid,

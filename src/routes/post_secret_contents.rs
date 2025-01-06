@@ -1,8 +1,6 @@
-use std::net::SocketAddr;
-
 use axum::{
     body::{Body, Bytes},
-    extract::{ConnectInfo, Path, State},
+    extract::{Path, State},
     http::StatusCode,
     response::{IntoResponse, Response},
 };
@@ -11,7 +9,10 @@ use uuid::Uuid;
 
 use crate::{
     errors::ResponseError,
-    models::{audit_log_entry::AuditLogAction, token::ExtractValidToken, AuditLogEntry, Secret},
+    models::{
+        audit_log_entry::AuditLogAction, client_addr::ExtractClientAddr, token::ExtractValidToken,
+        AuditLogEntry, Secret,
+    },
     ServerState,
 };
 
@@ -23,7 +24,7 @@ use crate::{
 pub async fn post_secret_contents(
     State(state): State<ServerState>,
     Path(uuid): Path<Uuid>,
-    ConnectInfo(client_addr): ConnectInfo<SocketAddr>,
+    ExtractClientAddr(client_addr): ExtractClientAddr,
     ExtractValidToken(token): ExtractValidToken,
     body: Bytes,
 ) -> Result<Response, ResponseError> {
@@ -38,7 +39,7 @@ pub async fn post_secret_contents(
     let mut secret = Secret::find(&state.database, uuid).await?;
     let _ = AuditLogEntry::log_action(
         &state.database,
-        client_addr.ip(),
+        client_addr.ip,
         AuditLogAction::SecretWrite,
         token.uuid,
         secret.uuid,

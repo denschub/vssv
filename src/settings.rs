@@ -17,4 +17,8 @@ pub struct Settings {
     /// Limits the number of threads used - defaults to the number of CPU cores
     #[clap(long, env = "THREADS")]
     pub threads: Option<usize>,
+
+    /// If set, the X-Real-IP header will be used for the audit log IPs
+    #[clap(long, env = "USE_X_REAL_IP")]
+    pub use_x_real_ip: bool,
 }

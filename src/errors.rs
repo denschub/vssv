@@ -8,10 +8,19 @@ use tracing::error;
 #[derive(Debug, thiserror::Error)]
 pub enum ResponseError {
     #[error("internal server error")]
+    AxumExtensionRejection(#[from] axum::extract::rejection::ExtensionRejection),
+
+    #[error("internal server error")]
     AxumHttpError(#[from] axum::http::Error),
 
     #[error("internal server error")]
     DbError(#[from] sqlx::Error),
+
+    #[error("x-real-ip header empty or unreadable")]
+    EmptyXRealIP(#[from] axum::http::header::ToStrError),
+
+    #[error("x-real-ip header malformed")]
+    InvalidXRealIP(#[from] std::net::AddrParseError),
 
     #[error("nothing found")]
     NoneFound(),
@@ -32,6 +41,9 @@ impl IntoResponse for ResponseError {
         let status_code = match self {
             ResponseError::Unauthorized() | ResponseError::TypedHeaderRejection(_) => {
                 StatusCode::UNAUTHORIZED
+            }
+            ResponseError::EmptyXRealIP(_) | ResponseError::InvalidXRealIP(_) => {
+                StatusCode::BAD_REQUEST
             }
             ResponseError::NoneFound() => StatusCode::NOT_FOUND,
             _ => StatusCode::INTERNAL_SERVER_ERROR,

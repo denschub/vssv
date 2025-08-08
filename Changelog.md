@@ -1,3 +1,7 @@
+# 2.0.1
+
+This is a patch release that does nothing except fixing configs and makes sure the container images are pushed to Docker Hub...
+
 # 2.0.0
 
 This version contains a large refactor to match an internal project template. This results in a few breaking changes and improvements:

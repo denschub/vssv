@@ -4,7 +4,7 @@ description = "A very simple secrets vault."
 authors = ["Dennis Schubert <mail@dennis-schubert.de>"]
 repository = "https://github.com/denschub/vssv"
 license = "MIT"
-version = "2.0.0"
+version = "2.0.1"
 edition = "2024"
 build = "build.rs"
 

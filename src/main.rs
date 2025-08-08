@@ -1,36 +1,49 @@
-use std::net::SocketAddr;
+mod components;
+mod entities;
+mod errors;
+mod routers;
 
+use std::{net::SocketAddr, sync::Arc};
+
+use anyhow::Context;
 use clap::Parser;
 use sqlx::{
-    postgres::{PgConnectOptions, PgPoolOptions},
     PgPool,
+    postgres::{PgConnectOptions, PgPoolOptions},
 };
-use tokio::{net::TcpListener, signal};
-
+use tokio::net::TcpListener;
 use tracing::info;
-use vssv::{routes::build_router, settings::Settings, ServerState};
 
-/// Listens to SIGINT (aka ctrl-c) and SIGTERM and completes whenever one of
-/// those signals happen.
+use crate::{
+    components::{
+        app_state::AppState,
+        settings::{LogFormat, Settings},
+    },
+    routers::build_main_router,
+};
+
+/// Sets up a relevant shutdown signals. This will exit on either SIGINT
+/// (aka Ctrl+C) or SIGTERM.
 async fn shutdown_signal() {
-    let sigint = async {
-        signal::unix::signal(signal::unix::SignalKind::interrupt())
-            .expect("creating SIGINT handler should not fail")
-            .recv()
-            .await;
+    let ctrl_c = async {
+        tokio::signal::ctrl_c()
+            .await
+            .expect("failed to create Ctrl+C handler");
     };
 
     let sigterm = async {
-        signal::unix::signal(signal::unix::SignalKind::terminate())
-            .expect("creating SIGTERM handler should not fail")
+        tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("failed to create SIGTERM handler")
             .recv()
             .await;
     };
 
     tokio::select! {
-        () = sigint => {},
+        () = ctrl_c => {},
         () = sigterm => {},
     }
+
+    info!("shutdown signal received")
 }
 
 /// Creates a [PgPool] if possible. The pool has its max_connections value set
@@ -62,24 +75,37 @@ fn main() -> anyhow::Result<()> {
 }
 
 async fn run(settings: Settings) -> anyhow::Result<()> {
-    tracing_subscriber::fmt::init();
+    let settings_clone = settings.clone();
 
-    let db_pool = get_db_pool(settings.database_url).await?;
-    sqlx::migrate!().run(&db_pool).await?;
+    let subscriber = tracing_subscriber::fmt()
+        .with_max_level(settings_clone.log_level.tracing_level())
+        .with_target(false);
+    match settings_clone.log_format {
+        LogFormat::Text => subscriber.with_ansi(false).init(),
+        LogFormat::TextColor => subscriber.with_ansi(true).init(),
+        LogFormat::Json => subscriber.json().with_span_list(false).init(),
+    }
 
-    let router = build_router(ServerState {
-        database: db_pool,
-        use_x_real_ip: settings.use_x_real_ip,
+    let database = get_db_pool(settings_clone.database_url).await?;
+    sqlx::migrate!().run(&database).await?;
+
+    let router = build_main_router(AppState {
+        database,
+        settings: Arc::new(settings),
     });
-    let listener = TcpListener::bind(settings.listen_addr).await?;
 
-    info!("Will start to listen on `{}`...", settings.listen_addr);
+    let listener = TcpListener::bind(settings_clone.listen)
+        .await
+        .context(format!("could not listen to `{}`", settings_clone.listen))?;
+
+    info!("starting server on `{}`", settings_clone.listen);
     axum::serve(
         listener,
         router.into_make_service_with_connect_info::<SocketAddr>(),
     )
     .with_graceful_shutdown(shutdown_signal())
-    .await?;
+    .await
+    .context("failed to start server")?;
 
     Ok(())
 }

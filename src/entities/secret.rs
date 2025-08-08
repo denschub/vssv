@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use sqlx::{postgres::PgQueryResult, PgExecutor};
+use sqlx::{PgExecutor, postgres::PgQueryResult};
 use uuid::Uuid;
 
 /// A secret entry stored in the database.

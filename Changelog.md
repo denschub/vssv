@@ -1,3 +1,11 @@
+# 2.0.0
+
+This version contains a large refactor to match an internal project template. This results in a few breaking changes and improvements:
+
+- The `--listen_addr`/`LISTEN_ADDR` setting has been renamed to `--listen`/`LISTEN`.
+- Log levels and formats are now configurable, see `--help`.
+- Binary releases and the official container images switched from Debian to Alpine as the base system. `libjemalloc` is no longer available in the container.
+
 # 1.3.2
 
 This version does not contain any functional changes. It only updates third-party dependencies.

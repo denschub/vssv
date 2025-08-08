@@ -1,13 +1,13 @@
-name: build
+name: release
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - published
   workflow_dispatch:
 
 jobs:
-  build:
+  docker-release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,13 +19,22 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: docker-meta
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
       - uses: docker/build-push-action@v6
         id: docker_build
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:develop
+          tags: ${{ steps.docker-meta.outputs.tags }}
+          labels: ${{ steps.docker-meta.outputs.labels }}
       - id: artifact_packaging
         name: packaging artifact
         run: |

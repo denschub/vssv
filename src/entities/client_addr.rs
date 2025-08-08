@@ -5,10 +5,10 @@ use std::{
 
 use axum::{
     extract::{ConnectInfo, FromRef, FromRequestParts},
-    http::{request::Parts, HeaderMap},
+    http::{HeaderMap, request::Parts},
 };
 
-use crate::{errors::ResponseError, ServerState};
+use crate::{AppState, errors::ResponseError};
 
 /// An access token stored in the database.
 #[derive(Debug)]
@@ -21,7 +21,7 @@ pub struct ExtractClientAddr(pub ClientAddr);
 
 impl<S> FromRequestParts<S> for ExtractClientAddr
 where
-    ServerState: FromRef<S>,
+    AppState: FromRef<S>,
     S: Send + Sync,
 {
     type Rejection = ResponseError;
@@ -31,8 +31,8 @@ where
     /// or if the x-real-ip header is missing. If the header is there, but
     /// somehow malformed, it will reject and return a 400.
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let server_state = ServerState::from_ref(state);
-        if server_state.use_x_real_ip {
+        let server_state = AppState::from_ref(state);
+        if server_state.settings.use_x_real_ip {
             let headers = HeaderMap::from_request_parts(parts, state)
                 .await
                 .expect("HeaderMap::from_request_parts to be infallible");

@@ -1,6 +1,6 @@
 use std::net::IpAddr;
 
-use sqlx::{postgres::PgQueryResult, types::ipnetwork::IpNetwork, PgExecutor};
+use sqlx::{PgExecutor, postgres::PgQueryResult, types::ipnetwork::IpNetwork};
 use uuid::Uuid;
 
 #[derive(Debug, sqlx::Type)]

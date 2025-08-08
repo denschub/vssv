@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 2c9f875913ee60ca25ce70243dc24d5b6415598c # v4.6.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md"]
+      - id: check-toml
+      - id: check-yaml
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: eeee35a89e69d5772bdee97db1a6a898467b686e # 1.0
+    hooks:
+      - id: fmt
+        name: cargo fmt
+      - id: clippy
+        name: cargo clippy
+        args: ["--all-targets", "--all-features", "--", "-D", "warnings"]
+  - repo: local
+    hooks:
+      - id: cargo-sqlx
+        name: sqlx offline check
+        entry: cargo sqlx prepare --check
+        language: system
+        files: \.rs$
+        pass_filenames: false

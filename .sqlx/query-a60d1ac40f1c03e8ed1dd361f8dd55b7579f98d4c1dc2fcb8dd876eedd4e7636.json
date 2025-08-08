@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select uuid, expires_at, token, superuser from tokens where token = $1",
+  "query": "select uuid, expires_at, superuser from tokens where token = $1",
   "describe": {
     "columns": [
       {
@@ -15,11 +15,6 @@
       },
       {
         "ordinal": 2,
-        "name": "token",
-        "type_info": "Bpchar"
-      },
-      {
-        "ordinal": 3,
         "name": "superuser",
         "type_info": "Bool"
       }
@@ -32,9 +27,8 @@
     "nullable": [
       false,
       true,
-      false,
       false
     ]
   },
-  "hash": "fe7e943e9444d4ae946363cb0668b2249a51859cc69bffc688dd9b0728062da3"
+  "hash": "a60d1ac40f1c03e8ed1dd361f8dd55b7579f98d4c1dc2fcb8dd876eedd4e7636"
 }

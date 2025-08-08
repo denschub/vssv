@@ -3,22 +3,21 @@ use axum::{
     http::request::Parts,
 };
 use axum_extra::{
-    headers::{authorization::Bearer, Authorization},
     TypedHeader,
+    headers::{Authorization, authorization::Bearer},
 };
 use chrono::{DateTime, Utc};
-use sqlx::{postgres::PgQueryResult, PgExecutor};
+use sqlx::{PgExecutor, postgres::PgQueryResult};
 use tracing::{info, warn};
 use uuid::Uuid;
 
-use crate::{errors::ResponseError, ServerState};
+use crate::{AppState, errors::ResponseError};
 
 /// An access token stored in the database.
 #[derive(Debug)]
 pub struct Token {
     pub uuid: Uuid,
     pub expires_at: Option<DateTime<Utc>>,
-    pub token: String,
     pub superuser: bool,
 }
 
@@ -31,7 +30,7 @@ impl Token {
     ) -> Result<Option<Self>, sqlx::Error> {
         sqlx::query_as!(
             Self,
-            "select uuid, expires_at, token, superuser from tokens where token = $1",
+            "select uuid, expires_at, superuser from tokens where token = $1",
             token
         )
         .fetch_optional(db)
@@ -108,7 +107,7 @@ pub struct ExtractValidToken(pub Token);
 
 impl<S> FromRequestParts<S> for ExtractValidToken
 where
-    ServerState: FromRef<S>,
+    AppState: FromRef<S>,
     S: Send + Sync,
 {
     type Rejection = ResponseError;
@@ -119,10 +118,11 @@ where
     /// even when the token is expired, so there is a way to track the usage of
     /// expired tokens.
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let app_state = ServerState::from_ref(state);
+        let app_state = AppState::from_ref(state);
 
         let token_header = TypedHeader::<Authorization<Bearer>>::from_request_parts(parts, state)
-            .await?
+            .await
+            .map_err(|_| Self::Rejection::Unauthorized())?
             .0;
 
         let token = Token::try_query_with_token(&app_state.database, token_header.token()).await?;

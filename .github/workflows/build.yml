@@ -39,7 +39,7 @@ jobs:
           docker cp $container:/app/vssv .
           echo "version=$(./vssv --version | awk -F ' ' '{print $2}')" >> $GITHUB_OUTPUT
           tar -cvf vssv.tar vssv
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: vssv-${{ steps.artifact_packaging.outputs.version }}-linux-amd64.tar
           path: ./out/vssv.tar

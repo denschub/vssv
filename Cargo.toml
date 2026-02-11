@@ -33,4 +33,4 @@ tracing-subscriber = { version = "0.3", features = ["json"] }
 uuid = { version = "1", features = ["v4", "serde"] }
 
 [build-dependencies]
-vergen-git2 = "1"
+vergen-git2 = "9"

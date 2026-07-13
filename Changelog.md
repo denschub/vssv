@@ -1,3 +1,11 @@
+# (unreleased)
+
+## Important: Username change
+
+If you deploy via Docker, or you have a script that downloads binaries from the repo, please note that my new username is `skyschub`. I have perma-parked the old username on GitHub and Docker Hub to avoid future security incidents from someone taking over the name. However, the old namespace will be frozen permanently and you will not receive new updates.
+
+Please adjust your image names and download URLs accordingly!
+
 # 2.0.3
 
 This version does not contain any functional changes. It only updates third-party dependencies.

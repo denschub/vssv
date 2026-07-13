@@ -1,4 +1,4 @@
-# (unreleased)
+# 2.0.4
 
 This version does not contain any functional changes. It only updates third-party dependencies.
 
